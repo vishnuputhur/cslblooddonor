@@ -6,6 +6,14 @@
     <title>CSL Blood Donation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-21G1BS7S3S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-21G1BS7S3S');
+    </script>
     <style>
         :root {
             --primary-red: #ff3b30;
@@ -407,6 +415,17 @@
             backdrop-filter: blur(5px);
         }
         
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .footer-separator {
+            opacity: 0.5;
+        }
+        
         .footer a {
             color: var(--primary-red);
             text-decoration: none;
@@ -536,7 +555,11 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            Powered by <a href="https://vtsoft.netlify.app" target="_blank">VTSoft</a> © 2026
+            <span id="donorStats">Total donars 0/0</span>
+            <span class="footer-separator">|</span>
+            <a href="https://vtsoft.netlify.app" target="_blank">VTSoft</a>
+            <span class="footer-separator">|</span>
+            <span>2026</span>
         </div>
     </footer>
     
@@ -745,6 +768,7 @@
             logoutBtn: document.getElementById('logoutBtn'),
             recentDonors: document.getElementById('recentDonors'),
             recentText: document.getElementById('recentDonorsText'),
+            donorStats: document.getElementById('donorStats'),
             addModal: document.getElementById('addModal'),
             editModal: document.getElementById('editModal'),
             loginModal: document.getElementById('loginModal'),
@@ -933,6 +957,18 @@
             return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} (${days} days ago)`;
         }
         
+        function updateDonorStats() {
+            const totalDonors = donors.length;
+            const readyToDonate = donors.filter(d => {
+                if (!d.lastDonation) return true;
+                const lastDate = new Date(d.lastDonation);
+                const daysSince = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
+                return daysSince >= 90;
+            }).length;
+            
+            elems.donorStats.textContent = `Total donars ${totalDonors}/${readyToDonate}`;
+        }
+        
         function renderDonors() {
             const filtered = selectedGroup === 'all' ? donors : donors.filter(d => d.bloodGroup === selectedGroup);
             const sorted = filtered.sort((a,b) => new Date(a.lastDonation || 0) - new Date(b.lastDonation || 0));
@@ -993,6 +1029,7 @@
             html += '</div>';
             elems.donorList.innerHTML = html;
             updateRecentBanner();
+            updateDonorStats();
         }
         
         function updateDate(id) {
