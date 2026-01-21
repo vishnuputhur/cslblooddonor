@@ -26,6 +26,7 @@
             --border-color: #e8e8e8;
             --shadow-soft: 0 4px 12px rgba(0,0,0,0.08);
             --gradient-primary: linear-gradient(135deg, #ff3b30, #d70015);
+            --available-green: #1b5e20;
         }
         
         * {
@@ -93,12 +94,11 @@
         .slogan {
             font-size: 0.6rem;
             opacity: 0.9;
-            font-weight: 600; /* Bold ആക്കി */
+            font-weight: 600;
             letter-spacing: 0.5px;
             margin-top: -2px;
         }
         
-        /* Admin Button - Symbol only */
         .admin-section {
             display: flex;
             align-items: center;
@@ -125,14 +125,12 @@
             transform: scale(1.1);
         }
         
-        /* Main Content - Compact */
         .main-container {
             max-width: 1200px;
             margin: 70px auto 50px;
             padding: 0 20px;
         }
         
-        /* Recent Donors Banner */
         .recent-donors {
             background: linear-gradient(135deg, #4CAF50, #2E7D32);
             color: white;
@@ -143,15 +141,40 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            animation: slideIn 0.5s ease-out;
         }
         
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Compact Search Bar */
+        .search-section {
+            margin-bottom: 15px;
         }
         
-        /* Compact Blood Filter */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            outline: none;
+            background: white;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-red);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
         .filter-section {
             background: var(--bg-white);
             border-radius: 10px;
@@ -188,7 +211,6 @@
             border-color: var(--primary-red);
         }
         
-        /* Compact Donor Cards */
         .donor-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -281,6 +303,24 @@
             color: #999;
         }
         
+        .days-info {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .days-remaining {
+            background: #fff8e1;
+            color: #f57c00;
+        }
+        
+        .days-eligible {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
         .actions {
             margin-top: 10px;
             padding-top: 10px;
@@ -317,7 +357,6 @@
             color: white;
         }
         
-        /* Add Button */
         .add-btn {
             position: fixed;
             bottom: 60px;
@@ -334,7 +373,6 @@
             z-index: 99;
         }
         
-        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -401,7 +439,6 @@
             margin-top: 10px;
         }
         
-        /* Compact Footer */
         .footer {
             background: rgba(255, 255, 255, 0.8);
             color: var(--text-light);
@@ -432,7 +469,11 @@
             font-weight: 600;
         }
         
-        /* Loading State */
+        .available-donors {
+            color: var(--available-green);
+            font-weight: 700;
+        }
+        
         .loading {
             text-align: center;
             padding: 40px;
@@ -454,7 +495,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -463,12 +503,26 @@
             box-shadow: var(--shadow-soft);
         }
         
-        /* Utility */
+        .search-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .search-info.hidden {
+            display: none;
+        }
+        
         .hidden {
             display: none !important;
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
             .donor-grid {
                 grid-template-columns: 1fr;
@@ -495,7 +549,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo-section">
@@ -518,15 +571,26 @@
         </div>
     </header>
     
-    <!-- Main Content -->
     <main class="main-container">
-        <!-- Recent Donors -->
         <div id="recentDonors" class="recent-donors hidden">
             <i class="fas fa-heart"></i>
             <span id="recentDonorsText">Thank you recent donors!</span>
         </div>
         
-        <!-- Filter -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by name or CSL code...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </section>
+        
+        <div id="searchInfo" class="search-info hidden">
+            <span id="searchResultsText">Search results for: </span>
+            <button id="clearSearchTextBtn" style="background:none;border:none;color:#1565c0;cursor:pointer;">
+                <i class="fas fa-times"></i> Clear
+            </button>
+        </div>
+        
         <section class="filter-section">
             <div class="blood-groups">
                 <button class="blood-btn active" data-group="all">All</button>
@@ -541,21 +605,17 @@
             </div>
         </section>
         
-        <!-- Donors List -->
         <div id="donorList">
-            <!-- Loading will be shown here initially -->
         </div>
     </main>
     
-    <!-- Add Button -->
     <button id="addBtn" class="add-btn">
         <i class="fas fa-plus"></i>
     </button>
     
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <span id="donorStats">Total donars 0/0</span>
+            <span>Total donars <span id="totalDonors">0</span>/<span id="availableDonors" class="available-donors">0</span></span>
             <span class="footer-separator">|</span>
             <a href="https://vtsoft.netlify.app" target="_blank">VTSoft</a>
             <span class="footer-separator">|</span>
@@ -563,7 +623,6 @@
         </div>
     </footer>
     
-    <!-- Add Modal -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -610,7 +669,6 @@
         </div>
     </div>
     
-    <!-- Edit Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -658,7 +716,6 @@
         </div>
     </div>
     
-    <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -675,7 +732,6 @@
         </div>
     </div>
     
-    <!-- Confirmation Modal -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -689,7 +745,6 @@
         </div>
     </div>
     
-    <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -704,12 +759,10 @@
         </div>
     </div>
     
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <script>
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyCCjWVI1hB3sbu0JiA4viW1BK81xbMML-U",
             authDomain: "csl-calculations.firebaseapp.com",
@@ -719,7 +772,6 @@
             appId: "1:887219643486:web:0cb001f2c72039a00240cf"
         };
         
-        // Initialize Firebase
         try {
             firebase.initializeApp(firebaseConfig);
         } catch (err) {
@@ -728,7 +780,6 @@
         
         const db = firebase.firestore();
         
-        // Show loading state
         function showLoading() {
             document.getElementById('donorList').innerHTML = `
                 <div class="loading">
@@ -738,37 +789,39 @@
             `;
         }
         
-        // Show empty state
-        function showEmptyState() {
+        function showEmptyState(message = "No donors found") {
             document.getElementById('donorList').innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-user-slash" style="font-size:3rem;color:#ddd;margin-bottom:15px;"></i>
-                    <h3>No donors found</h3>
-                    <p>Be the first to add a donor!</p>
+                    <h3>${message}</h3>
+                    <p>Try a different search or blood group</p>
                 </div>
             `;
         }
         
-        // Initialize app
         showLoading();
         
-        // State
         let donors = [];
         let selectedGroup = 'all';
         let isAdmin = localStorage.getItem('cslAdmin') === 'true';
         const ADMIN_PASS = "vishnu425";
-        let currentAction = null;
         let donorToDelete = null;
+        let searchQuery = '';
+        let isSearchActive = false;
         
-        // DOM Elements
         const elems = {
             donorList: document.getElementById('donorList'),
             addBtn: document.getElementById('addBtn'),
+            clearSearchTextBtn: document.getElementById('clearSearchTextBtn'),
+            searchInput: document.getElementById('searchInput'),
+            searchInfo: document.getElementById('searchInfo'),
+            searchResultsText: document.getElementById('searchResultsText'),
             loginBtn: document.getElementById('loginBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
             recentDonors: document.getElementById('recentDonors'),
             recentText: document.getElementById('recentDonorsText'),
-            donorStats: document.getElementById('donorStats'),
+            totalDonors: document.getElementById('totalDonors'),
+            availableDonors: document.getElementById('availableDonors'),
             addModal: document.getElementById('addModal'),
             editModal: document.getElementById('editModal'),
             loginModal: document.getElementById('loginModal'),
@@ -784,14 +837,12 @@
             loginForm: document.getElementById('loginForm')
         };
         
-        // Close Modals
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             });
         });
         
-        // Blood Filter
         document.querySelectorAll('.blood-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.blood-btn').forEach(b => b.classList.remove('active'));
@@ -801,18 +852,19 @@
             });
         });
         
-        // Add Button
         elems.addBtn.addEventListener('click', () => {
             document.getElementById('lastDate').valueAsDate = new Date();
             elems.addModal.style.display = 'flex';
         });
         
-        // Login Button
+        elems.searchInput.addEventListener('input', performSearch);
+        
+        elems.clearSearchTextBtn.addEventListener('click', clearSearch);
+        
         elems.loginBtn.addEventListener('click', () => {
             elems.loginModal.style.display = 'flex';
         });
         
-        // Logout Button
         elems.logoutBtn.addEventListener('click', () => {
             isAdmin = false;
             localStorage.removeItem('cslAdmin');
@@ -820,7 +872,6 @@
             showConfirm('Logged out successfully!');
         });
         
-        // Add Form
         elems.addForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const donor = {
@@ -845,7 +896,6 @@
                 });
         });
         
-        // Edit Form
         elems.editForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('editId').value;
@@ -870,7 +920,6 @@
                 });
         });
         
-        // Login Form
         elems.loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const pass = document.getElementById('password').value;
@@ -887,12 +936,10 @@
             }
         });
         
-        // Confirm OK Button (for success/error messages)
         elems.confirmOk.addEventListener('click', () => {
             elems.confirmModal.style.display = 'none';
         });
         
-        // Delete Yes/No Buttons
         elems.deleteYes.addEventListener('click', () => {
             if (donorToDelete) {
                 db.collection("donors").doc(donorToDelete.id).delete()
@@ -914,7 +961,40 @@
             donorToDelete = null;
         });
         
-        // Functions
+        function performSearch() {
+            searchQuery = elems.searchInput.value.trim().toLowerCase();
+            isSearchActive = searchQuery.length > 0;
+            
+            if (isSearchActive) {
+                elems.searchResultsText.textContent = `Search results for: "${searchQuery}"`;
+                elems.searchInfo.classList.remove('hidden');
+            } else {
+                elems.searchInfo.classList.add('hidden');
+            }
+            
+            renderDonors();
+        }
+        
+        function clearSearch() {
+            elems.searchInput.value = '';
+            searchQuery = '';
+            isSearchActive = false;
+            elems.searchInfo.classList.add('hidden');
+            renderDonors();
+        }
+        
+        function filterDonorsBySearch(donorList) {
+            if (!isSearchActive || !searchQuery) return donorList;
+            
+            return donorList.filter(donor => {
+                const name = donor.name?.toLowerCase() || '';
+                const cslCode = donor.cslCode?.toLowerCase() || '';
+                
+                return name.includes(searchQuery) || 
+                       cslCode.includes(searchQuery);
+            });
+        }
+        
         function showConfirm(msg) {
             elems.confirmText.textContent = msg;
             elems.confirmModal.style.display = 'flex';
@@ -953,38 +1033,51 @@
         function formatDate(dateStr) {
             if (!dateStr) return 'Never donated';
             const date = new Date(dateStr);
-            const days = Math.floor((new Date() - date) / (1000 * 60 * 60 * 24));
-            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} (${days} days ago)`;
+            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+        }
+        
+        function getDaysInfo(lastDonationDate) {
+            if (!lastDonationDate) return { daysSince: 999, canDonate: true };
+            
+            const lastDate = new Date(lastDonationDate);
+            const daysSince = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
+            const canDonate = daysSince >= 90;
+            const daysRemaining = 90 - daysSince;
+            
+            return { daysSince, canDonate, daysRemaining };
         }
         
         function updateDonorStats() {
             const totalDonors = donors.length;
             const readyToDonate = donors.filter(d => {
-                if (!d.lastDonation) return true;
-                const lastDate = new Date(d.lastDonation);
-                const daysSince = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
-                return daysSince >= 90;
+                const info = getDaysInfo(d.lastDonation);
+                return info.canDonate;
             }).length;
             
-            elems.donorStats.textContent = `Total donars ${totalDonors}/${readyToDonate}`;
+            elems.totalDonors.textContent = totalDonors;
+            elems.availableDonors.textContent = readyToDonate;
         }
         
         function renderDonors() {
-            const filtered = selectedGroup === 'all' ? donors : donors.filter(d => d.bloodGroup === selectedGroup);
+            let filtered = selectedGroup === 'all' ? [...donors] : donors.filter(d => d.bloodGroup === selectedGroup);
+            filtered = filterDonorsBySearch(filtered);
             const sorted = filtered.sort((a,b) => new Date(a.lastDonation || 0) - new Date(b.lastDonation || 0));
             
             if (sorted.length === 0) {
-                showEmptyState();
+                const message = isSearchActive ? 
+                    `No donors found for "${searchQuery}"` : 
+                    "No donors found";
+                showEmptyState(message);
                 return;
             }
             
             let html = '<div class="donor-grid">';
             sorted.forEach(d => {
-                // Check if 90 days passed
-                const lastDate = d.lastDonation ? new Date(d.lastDonation) : new Date(0);
-                const daysSince = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
-                const canDonate = daysSince >= 90;
-                const cardClass = canDonate ? '' : 'dimmed-card';
+                const info = getDaysInfo(d.lastDonation);
+                const cardClass = info.canDonate ? '' : 'dimmed-card';
+                const daysText = info.canDonate 
+                     ? ''
+                    : `<div class="days-info days-remaining">${info.daysRemaining} days remaining</div>`;
                 
                 html += `
                     <div class="donor-card ${cardClass}">
@@ -1008,8 +1101,9 @@
                             </div>` : ''}
                             <div class="last-donation">
                                 <i class="fas fa-calendar"></i>
-                                <span>${formatDate(d.lastDonation)}</span>
+                                <span>Last: ${formatDate(d.lastDonation)} (${info.daysSince} days ago)</span>
                             </div>
+                            ${daysText}
                         </div>
                         <div class="actions">
                             <button class="action-btn update-btn" onclick="updateDate('${d.id}')">
@@ -1081,7 +1175,6 @@
                         donors.push({ id: doc.id, ...doc.data() });
                     });
                     
-                    // If no donors, add sample data
                     if (donors.length === 0) {
                         addSampleDonors();
                     } else {
@@ -1091,7 +1184,6 @@
                 .catch(err => {
                     console.error("Error fetching donors:", err);
                     showEmptyState();
-                    alert("Error connecting to database. Check console for details.");
                 });
         }
         
@@ -1130,7 +1222,6 @@
             
             batch.commit()
                 .then(() => {
-                    console.log("Sample donors added");
                     fetchDonors();
                 })
                 .catch(error => {
@@ -1139,21 +1230,16 @@
                 });
         }
         
-        // Initialize
         fetchDonors();
         updateUI();
         
-        // Set today's date as default
         document.getElementById('lastDate').valueAsDate = new Date();
         
-        // Close modals when clicking outside
         window.addEventListener('click', (event) => {
             if (event.target.classList.contains('modal')) {
                 document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             }
         });
-        
-        console.log("CSL Blood Donation App initialized!");
     </script>
 </body>
 </html>
