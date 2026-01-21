@@ -1,0 +1,21 @@
+{
+  "name": "CSL Blood Donation",
+  "short_name": "CSL Blood",
+  "description": "Blood Donation Management App for CSL",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ff3b30",
+  "theme_color": "#ff3b30",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
