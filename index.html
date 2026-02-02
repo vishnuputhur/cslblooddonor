@@ -1254,15 +1254,6 @@
     });
   }
 </script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-
-  // ✅ അപ്‌ഡേറ്റ് നടന്നാൽ പേജ് ഉടൻ റിഫ്രഷ് ചെയ്യാൻ
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    window.location.reload();
-  });
-}
-
 
 </body>
 </html>
