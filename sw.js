@@ -1,4 +1,4 @@
-const CACHE_NAME = 'csl-blood-v2'; // മാറ്റങ്ങൾ വരുത്തുമ്പോൾ v3, v4 എന്നിങ്ങനെ മാറ്റുക
+const CACHE_NAME = 'csl-blood-v3'; // മാറ്റങ്ങൾ വരുത്തുമ്പോൾ v3, v4 എന്നിങ്ങനെ മാറ്റുക
 const assets = [
   '/',
   '/index.html',
